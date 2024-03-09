@@ -1,0 +1,22 @@
+---
+
+- name: "My Banner Playbook"
+  hosts: all
+  gather_facts: false
+  connection: network_cli
+
+  tasks:
+    - name: "Configuring Banner MOTD"
+      cisco.ios.ios_banner:
+        banner: motd
+        text: |
+          *********************************
+          Unauthorized Access is Prohibited
+          Please Contact Your Network Admin
+          *********************************
+        state: present
+      register: banner_output
+
+    - name: "Show Output"
+      debug:
+        msg: "{{ banner_output }}"
