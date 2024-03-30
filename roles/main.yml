@@ -1,0 +1,45 @@
+---
+
+- name: "Playbook to configure Vlans using ios specific modules"
+  hosts: ciscosw
+  connection: network_cli
+
+  tasks:
+    - name: "Cisco Vlan config using specific module"
+      cisco.ios.ios_vlans:
+        config:
+          - name: Web
+            vlan_id: 11
+            state: active
+            shutdown: disabled
+          - name: App
+            vlan_id: 12
+            state: active
+            shutdown: disabled
+        state: merged
+      register: vlan_output
+
+    - name: "Configuring interfaces and assign vlans"
+      cisco.ios.ios_l2_interfaces:
+        config:
+          - name: GigabitEthernet0/1
+            mode: access
+            access:
+              vlan: 11
+          - name: GigabitEthernet0/2
+            mode: access
+            access:
+              vlan: 12
+          - name: GigagbitEthernet0/3
+            trunk:
+              encapsulation: dot1q
+        state: merged
+      register: interface_output
+
+    - name: "configure Trunk interface"
+      cisco.ios.ios_l2_interfaces:
+        config:
+          - name: GigabitEthernet0/3
+            mode: trunk
+        state: merged
+      register: trunk_output
