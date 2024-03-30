@@ -11,8 +11,6 @@ vlans:
     - interface: "Gi0/3"
       mode: trunk
 
-
-
   vlan:
     - number: 11
       name: "WEB"
