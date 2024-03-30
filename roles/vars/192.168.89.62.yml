@@ -1,0 +1,24 @@
+vlans:
+  interfaces:
+    - interface: "Gi0/1"
+      mode: access
+      vlan: 11
+
+    - interface: "Gi0/2"
+      mode: access
+      vlan: 12
+
+    - interface: "Gi0/3"
+      mode: trunk
+
+
+
+  vlan:
+    - number: 11
+      name: "WEB"
+      svi: "192.168.11.2 255.255.255.0"
+
+    - number: 12
+      name: "APP"
+      svi: "192.168.12.2 255.255.255.0"
+

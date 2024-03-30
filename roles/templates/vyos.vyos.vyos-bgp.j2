@@ -1,0 +1,5 @@
+set protocols bgp {{ bgp.asn }} parameters router-id {{ bgp.rid }}
+{% for nbor in bgp.neighbors %}
+set protocols bgp {{ bgp.asn }} neighbor {{ nbor }} address-family ipv4-unicast
+set protocols bgp {{ bgp.asn }} neighbor {{ nbor }} remote-as external
+{% endfor %}

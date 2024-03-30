@@ -1,0 +1,46 @@
+---
+
+- name: "OSPF config using jinja2 template"
+  hosts: all
+  connection: network_cli
+
+  tasks:
+    - name: "Configure OSPF in vyos targeted devices"
+      vyos.vyos.vyos_config:
+        src: "{{ ansible_network_os }}-ospf.j2"
+      register: vyos_output
+      when: ansible_network_os == 'vyos.vyos.vyos'
+
+    - name: "Print out Vyos output"
+      debug:
+        msg: "{{ vyos_output }}"
+      when: ansible_network_os == 'vyos.vyos.vyos'
+
+    - name: "Configure OSPF in Cisco targeted devices"
+      cisco.ios.ios_config:
+        src: "{{ ansible_network_os }}-ospf.j2"
+      register: cisco_output
+      when: ansible_network_os == 'ios'
+
+    - name: "Print out ios output"
+      debug:
+        msg: "{{ cisco_output }}"
+      when: ansible_network_os == 'ios'
+      
+[root@localhost templates]# cat vyos.vyos.vyos-ospf.j2 
+set protocols ospf parameters router-id {{ ospf.rid }}
+{% for ntwk in ospf.networks %}
+set protocols ospf area {{ ntwk.area }} network {{ ntwk.network }}
+{% endfor %}
+
+[root@localhost templates]# cat ios-ospf.j2 
+router ospf 1
+router-id {{ ospf.rid }}
+{% for ntwk in ospf.networks %}
+network {{ ntwk.networks }} {{ ntwk.wildcard }} area {{ ntwk.area }}
+{% endfor %}
+{% if ospf.default_originate == true %}
+default-information originate
+{% endif %}
+[root@localhost templates]# vi ios-ospf.j2 
+[root@localhost templates]# 
